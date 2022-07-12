@@ -27,6 +27,7 @@ describe("key sourcing tool e2e registration page", () => {
             .should("contain",'Version')
             .wait(500)
         });
+
     it('should open registration page', function () {
 
         cy.get('a:contains("Skapa")')
@@ -36,7 +37,22 @@ describe("key sourcing tool e2e registration page", () => {
             .wait(500)
     });
 
+
+
     it('should fill the registration form', () => {
+
+
+        // for continuing to next pages need to get and save the authenticity_token
+
+        cy.get('input[type="hidden"]')
+            .should(($input)=> {
+            const token = $input.text()
+        })
+            .as('token')
+
+        //save token
+
+
         cy.get('a[class="navbar-brand"]')
             .should('contain', 'KeySourcingTool')
         cy.get("footer")
@@ -50,8 +66,6 @@ describe("key sourcing tool e2e registration page", () => {
             .should('contain.text','KeySourcingTool, Kungsgatan 44, 4 tr, 111 35 Stockholm, Sweden')
         cy.get('div[class="version"]')
             .should("contain",'Version')
-
-
 
 
 
@@ -73,15 +87,28 @@ describe("key sourcing tool e2e registration page", () => {
         cy.get("input[id=\"user_terms_of_service\"]")
             .click()
 
-        cy.contains('Sök...')
-            .click()
-            .parent()
-            .find('English')
-            .click()
+
+
+        cy.request('POST','/users', { utf8 : "✓",
+            authenticity_token: '',
+            'user[firstname]' : '',
+            'user[lastname]' : '',
+            'user[email]' : '',
+            'user[password]' : '',
+            'user[password_confirmation]': '',
+            'user[terms_of_service]': '',
+            'user[locale]': '',
+            'commit': "Spara"
+    })
+            .its('body')
+
+
+
         cy.contains('Spara')
             .click()
             .wait(2000)
+
         cy.url()
-            .should("include",'sign_up')
+            .should("include",'users')
     })
 })
