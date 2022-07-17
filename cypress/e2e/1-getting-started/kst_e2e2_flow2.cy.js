@@ -11,7 +11,7 @@ describe('supplier flow', () => {
                 const $html = Cypress.$(body)
                 const csrf = $html.find('input[name="authenticity_token"]').val()
 
-                cy.request('POST', 'https://test.keysourcingtool.com/users/', {
+                cy.request('POST', 'https://test.keysourcingtool.com/users/sign_in', {
                     'utf8': "✓",
                     'authenticity_token': csrf,
                     'user[email]': 'udilis38@gmail.com',
@@ -21,7 +21,7 @@ describe('supplier flow', () => {
                 })
                     .its('body')
             })
-
+    })
         it('should open edit users info page', function () {
             cy.visit('https://test.keysourcingtool.com/')
             cy.get("input[placeholder=\"user@domain.com\"]")
@@ -34,5 +34,5 @@ describe('supplier flow', () => {
                 .click({force: true})
             cy.getCookie('_cat_session').should('exist')
         });
-    })
+
 })

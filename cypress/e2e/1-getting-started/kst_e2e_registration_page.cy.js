@@ -15,7 +15,7 @@ describe("key sourcing tool e2e registration page", () => {
                 const $html = Cypress.$(body)
                 const csrf = $html.find('input[name="authenticity_token"]').val()
 
-                cy.request('POST', 'https://test.keysourcingtool.com/users/', {
+                cy.request('POST', 'https://test.keysourcingtool.com/users/sign_in', {
                     'utf8' : "✓",
                     'authenticity_token': csrf,
                     'user[firstname]': '',
