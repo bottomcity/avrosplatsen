@@ -6,7 +6,7 @@ describe("key sourcing tool e2e registration page", () => {
     beforeEach('parse token from HTML', function () {
 
 
-        cy.request('https://test.keysourcingtool.com/')
+        cy.request('https://test.keysourcingtool.com/users/sign_up')
             .its('body')
             .then((body) => {
 
@@ -15,7 +15,7 @@ describe("key sourcing tool e2e registration page", () => {
                 const $html = Cypress.$(body)
                 const csrf = $html.find('input[name="authenticity_token"]').val()
 
-                cy.request('POST', 'https://test.keysourcingtool.com/users/sign_in', {
+                cy.request('POST', 'https://test.keysourcingtool.com/users/', {
                     'utf8' : "✓",
                     'authenticity_token': csrf,
                     'user[firstname]': '',
@@ -24,7 +24,7 @@ describe("key sourcing tool e2e registration page", () => {
                     'user[password]': '',
                     'user[password_confirmation]': '',
                     'user[terms_of_service]': '',
-                    'user[locale]': '',
+                    'user[locale]': 'en',
                     'commit': "Spara"
                 })
                     .its('body')
@@ -89,10 +89,10 @@ describe("key sourcing tool e2e registration page", () => {
 
 
                 cy.get('input[id="user_firstname"]')
-                    .type('Alex')
+                    .type('Alexx')
                     .should("contain.value", "Alex")
                 cy.get('input[id="user_lastname"]')
-                    .type('Testqa')
+                    .type('Testqaa')
                     .should("contain.value", "Testqa")
                 cy.get('input[id="user_email"]')
                     .type('udilis38+12@gmail.com')
@@ -105,12 +105,27 @@ describe("key sourcing tool e2e registration page", () => {
                     .should('not.contain.text')
                 cy.get("input[id=\"user_terms_of_service\"]")
                     .click()
+                cy.get('a[class="select2-choice select2-default"]')
+                    .click()
+                cy.get('div[id="select2-drop"]')
+                    .parent()
+                    .find('div[class="select2-search"]')
+                    .parent()
+                    .find('input[autocomplete="off"]')
+                    .type("Eng",)
+
+                cy.wait(1000)
+
+                cy.get('div[id="select2-drop"]')
+                    .parent()
+                    .find('li')
+                    .click({multiple : true, force : true})
 
                 cy.contains('Spara')
                     .click()
                     .wait(2000)
 
                 cy.url()
-                    .should("include", 'users')
+                    .should("not.contain.text", 'users')
             })
         })
