@@ -1,9 +1,10 @@
-describe("key sourcing tool e2e log in flow", () => {
+describe('supplier flow', () => {
 
-    it('parse token from HTML', function () {
+    let cookie
 
+    beforeEach('parse token from HTML', function () {
 
-        cy.request('https://test.keysourcingtool.com/')
+        cy.request('https://test.keysourcingtool.com/users/sign_in')
             .its('body')
             .then((body) => {
 
@@ -12,33 +13,56 @@ describe("key sourcing tool e2e log in flow", () => {
                 const $html = Cypress.$(body)
                 const csrf = $html.find('input[name="authenticity_token"]').val()
 
-                cy.request('POST', 'https://test.keysourcingtool.com/users/', {
+                cy.request('POST', 'https://test.keysourcingtool.com/users/sign_in', {
                     'utf8': "✓",
                     'authenticity_token': csrf,
-                    'user[firstname]': '',
-                    'user[lastname]': '',
-                    'user[email]': '',
-                    'user[password]': '',
-                    'user[password_confirmation]': '',
-                    'user[terms_of_service]': '',
-                    'user[locale]': '',
-                    'commit': "Spara"
+                    'user[email]': 'udilis38@gmail.com',
+                    'user[password]': 'qwerty',
+                    'user[remember_me]': "0",
+                    'commit': "Logga+in"
                 })
-                    .its('body')
             })
+            .its('body')
+    })
+    it('saving cookie', function () {
 
 
-        it('should check log in page', function () {
-            cy.visit('https://test.keysourcingtool.com/')
-            cy.setCookie('expire', 'hour')
-            cy.get("input[placeholder=\"user@domain.com\"]")
-                .type('udilis38@gmail.com');
-            cy.get("input[id=\"user_password\"]")
-                .type('Asdqwe123!')
-            cy.get('label[class="checkbox"]')
-                .click()
-            cy.get('input[value="Logga in"]')
-                .click({force: true})
-        })
+        cy.getCookie('_cat_session')
+            .should('exist')
+            .then((c) => {
+
+                // save cookie until need it
+
+                cookie = c
+            })
+    })
+
+
+    it('fill the form', function () {
+        cy.visit('https://test.keysourcingtool.com/')
+
+        cy.get("input[class=\" string email required \"]")
+            .type('udilis38@gmail.com');
+        cy.get("input[class=\" password optional \"]")
+            .type('qwerty')
+        cy.get('label[class="checkbox"]')
+            .click()
+
+    })
+
+    it('click log in', function () {
+
+        // send correct request
+        cy.get('input[value="Logga in"]')
+            .click()
+            .then(() => {
+                cy.request({
+                    url: 'https://test.keysourcingtool.com/users/sign_in',
+                    headers: {
+                        'Cookie': cookie.value,
+                    },
+                })
+            })
     })
 })
+
