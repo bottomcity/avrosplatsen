@@ -23,8 +23,6 @@ describe('supplier flow', () => {
                 })
             })
             .its('body')
-    })
-    it('saving cookie', function () {
 
 
         cy.getCookie('_cat_session')
@@ -47,22 +45,11 @@ describe('supplier flow', () => {
             .type('qwerty')
         cy.get('label[class="checkbox"]')
             .click()
-
-    })
-
-    it('click log in', function () {
-
-        // send correct request
         cy.get('input[value="Logga in"]')
             .click()
-            .then(() => {
-                cy.request({
-                    url: 'https://test.keysourcingtool.com/users/sign_in',
-                    headers: {
-                        'Cookie': cookie.value,
-                    },
-                })
-            })
+
     })
+
 })
+
 
